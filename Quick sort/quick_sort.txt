@@ -1,0 +1,89 @@
+#include <iostream>
+#include <fstream>
+#include <algorithm>
+
+using namespace std;
+
+void swap(int *a, int *b)
+{
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+int partition(int arr[], int low, int high, int &numOfcomp)
+{
+    int pivot = arr[high];
+    int i = (low - 1);
+
+    for (int j = low; j <= high - 1; j++)
+    {
+        if (numOfcomp++, arr[j] < pivot)
+        {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[high]);
+    return (i + 1);
+}
+
+void quickSort(int arr[], int low, int high, int &numOfcomp)
+{
+    if (low < high)
+    {
+        int pi = partition(arr, low, high, numOfcomp);
+        quickSort(arr, low, pi - 1, numOfcomp);
+        quickSort(arr, pi + 1, high, numOfcomp);
+    }
+}
+
+void generate_random_array(int arr[], int size)
+{
+
+    for (int i = 0; i < size; i++)
+    {
+        arr[i] = (rand() % 1000);
+    }
+}
+
+void worst_case(int cases, int min, int max)
+{
+    ofstream worst_case_file("worst_quick.csv");
+    int interval = (((max - min) / cases) / 10) * 10;
+    int count = 0;
+    for (int i = min; count < cases; i += interval, count++)
+    {
+        int *random_array = new int[i];
+        generate_random_array(random_array, i);
+        sort(&random_array[0], &random_array[i]);
+        int numOfcomp = 0;
+        quickSort(random_array, 0, i - 1, numOfcomp);
+        worst_case_file << i << "," << numOfcomp << "\n";
+        delete[] random_array;
+    }
+    worst_case_file.close();
+}
+
+void average_case(int cases, int min, int max)
+{
+    ofstream average_case_file("average_quick.csv");
+    int interval = (((max - min) / cases) / 10) * 10;
+    int count = 0;
+    for (int i = min; count < cases; i += interval, count++)
+    {
+        int *random_array = new int[i];
+        generate_random_array(random_array, i);
+        int numOfcomp = 0;
+        quickSort(random_array, 0, i - 1, numOfcomp);
+        average_case_file << i << "," << numOfcomp << "\n";
+        delete[] random_array;
+    }
+    average_case_file.close();
+}
+
+int main()
+{
+    worst_case(30, 30, 1000);
+    average_case(70, 30, 1000);
+}

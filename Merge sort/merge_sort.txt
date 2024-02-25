@@ -1,0 +1,90 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+ int comp = 0;
+int n = 0;
+void printarray( int size,int comp){
+        fstream fout;
+        fout.open("merge.csv", ios::out | ios::app);
+        fout << size << "," << comp << endl; 
+
+}
+void merge(int arr[], int leftFirst, int leftLast, int rightFirst, int rightLast, int size){
+
+ int temparr[size];
+        int index = leftFirst;
+        int saveFirst = leftFirst;
+
+        while((leftFirst <= leftLast)  && ( rightFirst <= rightLast)){//compare and select smallest from two subarrays
+
+            if(arr[leftFirst] < arr[rightFirst]){
+                temparr[index]  = arr[leftFirst]; 
+                leftFirst++;
+            }
+            else
+            {
+                temparr[index]  = arr[rightFirst];
+                rightFirst++;
+            }
+            index++;
+            comp++;  
+        }
+       
+        while(leftFirst <= leftLast){ 
+
+            temparr[index] = arr[leftFirst];
+            leftFirst++;
+            index++;
+           
+        }
+        while(rightFirst <= rightLast){
+            temparr[index] = arr[rightFirst];
+            rightFirst++;
+            index++;
+           
+        }
+       
+        for(index = saveFirst; index <= rightLast; index++)
+            arr[index] = temparr[index];
+      
+    }
+void mergesort(int a[], int start, int end, int size){  
+        if(start < end){
+        int mid = (start+end)/2;
+        int n=mid+1;
+        mergesort(a,start, mid,size);
+        mergesort(a,n,end,size);
+        merge(a, start,mid, n, end, size);
+    }
+}
+
+void randomNum(int size)
+{
+    
+    int arr[size];
+    for (int i = 0; i < size; i++)
+    {
+        arr[i] = (rand() % 100);
+    }
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int start = 0;
+    int end = n-1;
+    mergesort(arr, start, end, size);
+}
+int main(){
+
+  
+   int min = 30;
+    int max = 1000;
+   int interval = (max - min) / 100;
+    int count = 0;
+    for (int i = min; i < max && count < 100; i += interval)
+    {
+        randomNum(i );
+        printarray(i,comp);
+       
+        count++;
+        comp=0;
+    }
+}
+

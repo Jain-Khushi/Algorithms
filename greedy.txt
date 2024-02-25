@@ -1,0 +1,44 @@
+#include <iostream>
+using namespace std;
+
+void knapsack(int n, double weight[], double profit[], double capacity)
+{
+    double total_Profit = 0;
+    int c = capacity;
+
+    for (int i = 0; i < n; i++)
+    {
+        if (weight[i] > c)
+            break;
+        else
+        {
+            total_Profit += profit[i];
+            c -= weight[i];
+        }
+    }
+
+    cout << "\nMaximum profit : " << total_Profit;
+}
+
+// Main function(Driver Code)
+int main()
+{
+    double weight[20], profit[20], capacity;
+
+    cout << "\nEnter the no. of objects : ";
+    int num;
+    cin >> num;
+
+    cout << "\nEnter the weights and profits of each object (With space) : \n";
+    for (int i = 0; i < num; i++)
+    {
+        cin >> weight[i] >> profit[i];
+    }
+
+    cout << "\nEnter the capacity of knapsack : ";
+    cin >> capacity;
+
+    knapsack(num, weight, profit, capacity);
+
+    return 0;
+}

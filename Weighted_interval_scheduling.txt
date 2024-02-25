@@ -1,0 +1,102 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+// Data structure to store a Job
+struct Job
+{
+    int start, finish, weight;
+};
+
+void findMaxWeightJobs(vector<Job> jobs)
+{
+    // sort the jobs according to increasing order of their start time
+    // sort(jobs.begin(), jobs.end(),
+    //      [](Job &x, Job &y)
+    //      {
+    //          return x.start < y.start;
+    //      });
+    //  output:The jobs involved in the maximum weight are (1, 4, 30) (4, 5, 60) (5, 9, 50)
+
+    // sort the jobs according to increasing order of their finish time
+    sort(jobs.begin(), jobs.end(),
+         [](Job &x, Job &y)
+         {
+             return x.finish < y.finish;
+         });
+    //  output:The jobs involved in the maximum weight are (1, 4, 30) (4, 5, 60) (5, 9, 50)
+
+    // get the number of jobs
+    int n = jobs.size();
+
+    // base case
+    if (n == 0)
+    {
+        return;
+    }
+
+    // `tasks[i]` stores the index of non-conflicting jobs involved in the
+    // maximum weight, which ends with the i'th job
+    vector<int> tasks[n];
+
+    // `maxweight[i]` stores the total weight of jobs in `tasks[i]`
+    int maxWeight[n];
+
+    // consider every job
+    for (int i = 0; i < n; i++)
+    {
+        // initialize current weight to 0
+        maxWeight[i] = 0;
+
+        // consider each `j` less than `i`
+        for (int j = 0; j < i; j++)
+        {
+            // update i'th job if the j'th job is non-conflicting and leading to the
+            // maximum weight
+            if (jobs[j].finish <= jobs[i].start && maxWeight[i] < maxWeight[j])
+            {
+                tasks[i] = tasks[j];
+                maxWeight[i] = maxWeight[j];
+            }
+        }
+
+        // end current task with i'th job
+        tasks[i].push_back(i);
+        maxWeight[i] += jobs[i].weight;
+    }
+
+    // find an index with the maximum weight
+    int index = 0;
+    for (int i = 1; i < n; i++)
+    {
+        if (maxWeight[i] > maxWeight[index])
+        {
+            index = i;
+        }
+    }
+
+    cout << "The jobs involved in the maximum weight are ";
+    for (int i : tasks[index])
+    {
+        cout << "(" << jobs[i].start << ", " << jobs[i].finish << ", "
+             << jobs[i].weight << ") ";
+    }
+}
+
+// Main Function(Driver Code)
+int main()
+{
+    vector<Job> jobs{
+        {0, 6, 60},
+        {5, 9, 50},
+        {1, 4, 30},
+        {4, 5, 60},
+        {5, 7, 30},
+        {3, 5, 10},
+        {7, 8, 10}};
+
+    findMaxWeightJobs(jobs);
+
+    return 0;
+}
